@@ -1,7 +1,10 @@
 <?php
 
+use App\Events\UserRegistered;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Jobs\SendMail;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -41,8 +44,25 @@ Route::group(['middleware' => 'auth'], function() {
     Route::resource('posts', PostController::class);
 });
 
+Route::get('send-mail', function () {
+    SendMail::dispatch();
 
+    dd('mail has been sent');
+});
 
 Route::get('user-data', function () {
     return auth()->user()->email;
 });
+
+Route::get('user-register', function () {
+    $user = 'example@gmail.com';
+    event(new UserRegistered($user));
+    dd('message sent');
+});
+
+
+Route::get('greeting/{locale?}', function (?string $locale = 'en') {
+    App::setLocale($locale);
+
+    return view('greeting');
+})->name('greeting');
