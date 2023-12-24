@@ -1,9 +1,13 @@
 <?php
 
 use App\DataTables\UsersDataTable;
+use App\Helpers\ImageFilter;
 use App\Http\Controllers\ProfileController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +31,14 @@ Route::get('user/edit/{id}', function (string $id) {
 Route::get('user/remove/{id}', function (string $id) {
     return $id;
 })->name('user.remove');
+
+Route::get('image', function () {
+    $manager = new ImageManager(new Driver());
+    $image = $manager->read('wp4615510-terminal-wallpapers.jpg');
+    $image->modify(new ImageFilter(15));
+
+    return '<img src="wp4615510-terminal-wallpapers-filtered.jpg" />';
+});
 
 Route::get('/dashboard', function (UsersDataTable $dataTable) {
     return $dataTable->render('dashboard');
